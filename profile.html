@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | Kanna Shirts</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#0a0a0a',
+                            gray: '#1a1a1a',
+                            accent: '#FFD700',
+                            text: '#f3f4f6'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+</head>
+
+<body class="bg-brand-dark text-brand-text font-sans antialiased min-h-screen">
+
+    <!-- Navbar -->
+    <nav class="bg-brand-gray border-b border-white/5 py-4">
+        <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+            <a href="index.html" class="text-2xl font-serif font-bold text-white tracking-tighter">KANNA</a>
+            <div class="flex items-center gap-6">
+                <a href="shop.html" class="text-gray-400 hover:text-white text-sm">Shop</a>
+                <button onclick="logout()" class="text-red-400 hover:text-red-300 text-sm">Sign Out</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-4xl mx-auto px-4 py-12">
+
+        <!-- Profile Header -->
+        <div class="flex items-center gap-6 mb-12 animate-fade-in">
+            <div class="w-20 h-20 bg-brand-accent rounded-full flex items-center justify-center text-brand-dark text-3xl font-bold font-serif"
+                id="profile-initial">
+                Allowed
+            </div>
+            <div>
+                <h1 class="text-3xl font-bold text-white" id="profile-name">Loading...</h1>
+                <p class="text-gray-400" id="profile-email">loading...</p>
+            </div>
+        </div>
+
+        <!-- Order History -->
+        <div class="animate-fade-in delay-100">
+            <h2 class="text-xl font-serif font-bold text-white mb-6 border-b border-white/10 pb-4">Order History</h2>
+
+            <div class="bg-brand-gray rounded-lg border border-white/10 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="bg-black/20 text-gray-400 text-sm border-b border-white/10">
+                            <tr>
+                                <th class="py-4 px-6">Order ID</th>
+                                <th class="py-4 px-6">Date</th>
+                                <th class="py-4 px-6">Items</th>
+                                <th class="py-4 px-6">Total</th>
+                                <th class="py-4 px-6">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="order-history-body" class="text-sm divide-y divide-white/5">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = getCurrentUser();
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Fill Profile Info
+            document.getElementById('profile-name').textContent = user.name;
+            document.getElementById('profile-email').textContent = user.email;
+            document.getElementById('profile-initial').textContent = user.name.charAt(0).toUpperCase();
+
+            // Load Orders
+            const allOrders = getOrders(); // Function from script.js
+            // Filter orders for this user (by email)
+            const myOrders = allOrders.filter(o => o.customer.email === user.email);
+
+            const tbody = document.getElementById('order-history-body');
+            tbody.innerHTML = '';
+
+            if (myOrders.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="py-8 text-center text-gray-500">You haven\'t placed any orders yet.</td></tr>';
+            } else {
+                myOrders.forEach(order => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-white/5 transition-colors';
+
+                    const itemsSummary = order.items.map(i => `${i.name} (${i.selectedSize || 'M'})`).join(', ');
+
+                    tr.innerHTML = `
+                        <td class="py-4 px-6 text-brand-accent font-mono text-xs">#${order.id}</td>
+                        <td class="py-4 px-6 text-gray-400">${order.date.split(',')[0]}</td>
+                        <td class="py-4 px-6 text-white max-w-xs truncate" title="${itemsSummary}">${itemsSummary}</td>
+                        <td class="py-4 px-6 text-white font-bold">Rs. ${parseFloat(order.total).toLocaleString()}</td>
+                        <td class="py-4 px-6">
+                            <span class="bg-yellow-500/10 text-yellow-500 text-xs px-2 py-1 rounded border border-yellow-500/20">${order.status || 'Pending'}</span>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

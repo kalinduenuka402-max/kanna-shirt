@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Story | Kanna Shirts</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#0a0a0a',
+                            gray: '#1a1a1a',
+                            accent: '#FFD700', // Gold
+                            accentHover: '#E5C100',
+                            text: '#f3f4f6',
+                            muted: '#9ca3af'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass {
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+
+<body class="bg-brand-dark text-brand-text font-sans antialiased">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex-shrink-0">
+                    <a href="index.html"
+                        class="text-3xl font-serif font-bold tracking-tighter text-white hover:text-brand-accent transition-colors">
+                        KANNA<span class="text-brand-accent">.</span>
+                    </a>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="index.html"
+                            class="text-gray-300 hover:text-brand-accent px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</a>
+                        <a href="shop.html"
+                            class="text-gray-300 hover:text-brand-accent px-3 py-2 rounded-md text-sm font-medium transition-colors">Collection</a>
+                        <a href="about.html"
+                            class="text-white hover:text-brand-accent px-3 py-2 rounded-md text-sm font-medium transition-colors">Our
+                            Story</a>
+                        <a href="contact.html"
+                            class="text-gray-300 hover:text-brand-accent px-3 py-2 rounded-md text-sm font-medium transition-colors">Contact</a>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center space-x-4">
+                    <button onclick="toggleCart(true)"
+                        class="cart-btn-toggle text-white hover:text-brand-accent transition-colors relative group">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                        </svg>
+                        <span
+                            class="cart-count-badge absolute -top-2 -right-2 bg-brand-accent text-brand-dark text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center transform scale-0 transition-transform">0</span>
+                    </button>
+                </div>
+                <div class="-mr-2 flex md:hidden">
+                    <button type="button" onclick="toggleMobileMenu()"
+                        class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-white/10 focus:outline-none">
+                        <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div class="md:hidden hidden bg-brand-dark/95 backdrop-blur-md" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-white/10">
+                <a href="index.html"
+                    class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Home</a>
+                <a href="shop.html"
+                    class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Collection</a>
+                <a href="about.html" class="text-white block px-3 py-2 rounded-md text-base font-medium">Our Story</a>
+                <a href="contact.html"
+                    class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <div class="relative py-24 bg-brand-dark overflow-hidden">
+        <div class="absolute inset-0 opacity-20">
+            <img src="https://images.unsplash.com/photo-1556905055-8f358a7a47b2?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80"
+                alt="Tailor Workshop" class="w-full h-full object-cover">
+        </div>
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-20">
+            <h1 class="text-5xl md:text-7xl font-serif font-bold text-white mb-6">Crafting <span
+                    class="text-brand-accent italic">Confidence</span></h1>
+            <p class="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+                The journey of Kanna began with a simple idea: To create printed shirts that are as unique as the people
+                who wear them.
+            </p>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <section class="py-24 bg-brand-gray">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                <div>
+                    <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                        alt="Our Team" class="rounded-lg shadow-2xl skew-y-3 border border-white/10">
+                </div>
+                <div>
+                    <h2 class="text-4xl font-serif font-bold text-white mb-6">The Kanna Standard</h2>
+                    <p class="text-gray-300 mb-6 leading-relaxed">
+                        In a world of fast fashion, we choose detail. Every Kanna shirt is a result of meticulous
+                        craftsmanship, from sourcing the finest breathable fabrics to curating prints that stand out
+                        from the crowd.
+                    </p>
+                    <p class="text-gray-300 mb-6 leading-relaxed">
+                        We believe that a shirt is more than just clothing—it's an expression of personality. Whether
+                        you're bold and adventurous or subtle and sophisticated, there's a Kanna print designed just for
+                        you.
+                    </p>
+                    <div class="grid grid-cols-2 gap-8 mt-10">
+                        <div>
+                            <span class="block text-4xl font-bold text-brand-accent mb-2">5+</span>
+                            <span class="text-sm text-gray-400 uppercase tracking-widest">Years of Excellence</span>
+                        </div>
+                        <div>
+                            <span class="block text-4xl font-bold text-brand-accent mb-2">10k+</span>
+                            <span class="text-sm text-gray-400 uppercase tracking-widest">Happy Customers</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black text-gray-400 py-12 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:text-left">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <a href="#" class="text-2xl font-serif font-bold text-white mb-4 block">KANNA.</a>
+                    <p class="text-sm">Defining style for the modern generation. Premium prints, unmatched quality.</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4 uppercase text-sm tracking-wider">Shop</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="shop.html" class="hover:text-brand-accent transition-colors">All Shirts</a></li>
+                        <li><a href="#" class="hover:text-brand-accent transition-colors">New Arrivals</a></li>
+                        <li><a href="#" class="hover:text-brand-accent transition-colors">Best Sellers</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4 uppercase text-sm tracking-wider">Support</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="contact.html" class="hover:text-brand-accent transition-colors">Contact Us</a></li>
+                        <li><a href="#" class="hover:text-brand-accent transition-colors">Size Guide</a></li>
+                        <li><a href="#" class="hover:text-brand-accent transition-colors">Shipping & Returns</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4 uppercase text-sm tracking-wider">Follow Us</h4>
+                    <div class="flex justify-center sm:justify-start space-x-4">
+                        <a href="#"
+                            class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-brand-accent hover:text-brand-dark transition-all">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                            </svg>
+                        </a>
+                        <a href="#"
+                            class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-brand-accent hover:text-brand-dark transition-all">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="mt-8 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
+                <p>&copy; 2024 Kanna Shirts. All rights reserved.</p>
+                <a href="admin.html" class="opacity-20 hover:opacity-100 transition-opacity" title="Admin Panel">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
+                        </path>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- Cart Sidebar -->
+    <div id="cart-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] hidden transition-opacity"
+        onclick="toggleCart(false)"></div>
+    <div id="cart-sidebar"
+        class="fixed top-0 right-0 h-full w-full max-w-md bg-brand-dark border-l border-white/10 z-[70] transform translate-x-full transition-transform duration-300 shadow-2xl flex flex-col">
+        <div class="flex items-center justify-between p-6 border-b border-white/10">
+            <h2 class="text-2xl font-serif font-bold text-white">Your Cart</h2>
+            <button onclick="toggleCart(false)" class="text-gray-400 hover:text-white p-2">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-6 space-y-4" id="cart-items">
+            <!-- Items injected by JS -->
+            <p class="text-gray-500 text-center py-10">Your cart is empty.</p>
+        </div>
+
+        <div class="border-t border-white/10 p-6 bg-brand-gray">
+            <div class="flex justify-between items-center mb-6">
+                <span class="text-gray-400">Total</span>
+                <span class="text-3xl font-serif font-bold text-brand-accent" id="cart-total">Rs. 0</span>
+            </div>
+            <button onclick="checkout()"
+                class="w-full bg-brand-accent text-brand-dark font-bold py-4 rounded-full hover:bg-white transition-colors">
+                Checkout Now
+            </button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

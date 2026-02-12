@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Kanna Shirts</title>
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#0a0a0a',
+                            gray: '#1a1a1a',
+                            accent: '#FFD700', // Gold
+                            accentHover: '#E5C100',
+                            text: '#f3f4f6',
+                            muted: '#9ca3af'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-brand-dark text-brand-text font-sans antialiased min-h-screen">
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="fixed inset-0 z-50 bg-brand-dark flex items-center justify-center">
+        <div class="bg-brand-gray p-8 rounded-lg shadow-2xl border border-white/10 max-w-md w-full mx-4">
+            <h2 class="text-3xl font-serif font-bold text-white mb-6 text-center">Admin Access</h2>
+            <form onsubmit="handleLogin(event)" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-2">Password</label>
+                    <input type="password" id="password"
+                        class="w-full bg-brand-dark border border-white/10 rounded-md px-4 py-3 text-white focus:outline-none focus:border-brand-accent transition-colors"
+                        placeholder="Enter password">
+                </div>
+                <button type="submit"
+                    class="w-full bg-brand-accent text-brand-dark font-bold py-3 rounded-md hover:bg-white transition-colors">
+                    Login
+                </button>
+                <p id="login-error" class="text-red-500 text-sm hidden text-center">Incorrect password.</p>
+            </form>
+            <div class="mt-4 text-center">
+                <a href="index.html" class="text-gray-500 hover:text-white text-sm">Return to Website</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Content (Hidden by default) -->
+    <div id="admin-content" class="hidden">
+        <nav class="bg-brand-gray border-b border-white/5 px-4 py-4 sticky top-0 z-40">
+            <div class="max-w-7xl mx-auto flex justify-between items-center">
+                <div class="flex items-center gap-8">
+                    <h1 class="text-xl font-bold text-brand-accent">KANNA ADMIN</h1>
+                    <div class="hidden md:flex gap-4">
+                        <button onclick="switchTab('orders')" id="btn-orders"
+                            class="text-white hover:text-brand-accent transition-colors font-medium border-b-2 border-brand-accent">Orders</button>
+                        <button onclick="switchTab('products')" id="btn-products"
+                            class="text-gray-400 hover:text-white transition-colors font-medium border-b-2 border-transparent">Products</button>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <a href="index.html" class="text-gray-400 hover:text-white text-sm">View Site</a>
+                    <button onclick="logout()" class="text-red-400 hover:text-red-300 text-sm">Logout</button>
+                </div>
+            </div>
+        </nav>
+
+        <div class="max-w-7xl mx-auto px-4 py-8">
+
+            <!-- Orders View -->
+            <div id="view-orders" class="space-y-6 animate-fade-in">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                    <h2 class="text-2xl font-bold text-white">Recent Orders</h2>
+                    <div class="flex bg-white/5 p-1 rounded-lg border border-white/10">
+                        <button onclick="setOrderFilter('all')" id="filter-all"
+                            class="px-4 py-1.5 text-xs font-bold rounded-md transition-all bg-brand-accent text-brand-dark">All</button>
+                        <button onclick="setOrderFilter('Pending')" id="filter-pending"
+                            class="px-4 py-1.5 text-xs font-bold rounded-md transition-all text-gray-400 hover:text-white">Pending</button>
+                        <button onclick="setOrderFilter('Confirmed')" id="filter-confirmed"
+                            class="px-4 py-1.5 text-xs font-bold rounded-md transition-all text-gray-400 hover:text-white">Confirmed</button>
+                    </div>
+                </div>
+                <div class="bg-brand-gray rounded-lg border border-white/10 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="bg-black/20 text-gray-400 text-sm border-b border-white/10">
+                                <tr>
+                                    <th class="py-4 px-6">Order ID</th>
+                                    <th class="py-4 px-6">Date</th>
+                                    <th class="py-4 px-6">Customer</th>
+                                    <th class="py-4 px-6">Shipping To</th>
+                                    <th class="py-4 px-6">Status</th>
+                                    <th class="py-4 px-6">Total</th>
+                                    <th class="py-4 px-6 text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orders-table-body" class="text-sm divide-y divide-white/5">
+                                <!-- JS Populated -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products View -->
+            <div id="view-products" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade-in">
+
+                <!-- Add Product Form -->
+                <div class="lg:col-span-1">
+                    <div class="bg-brand-gray p-6 rounded-lg border border-white/10 top-24 sticky">
+                        <h2 class="text-xl font-bold text-white mb-6">Add New Shirt</h2>
+                        <form onsubmit="handleAddProduct(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-1">Product Name</label>
+                                <input type="text" id="p-name" required
+                                    class="w-full bg-brand-dark border border-white/10 rounded px-3 py-2 text-white focus:border-brand-accent outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-1">Price (Rs)</label>
+                                <input type="number" id="p-price" required
+                                    class="w-full bg-brand-dark border border-white/10 rounded px-3 py-2 text-white focus:border-brand-accent outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-1">Material / Tagline</label>
+                                <input type="text" id="p-desc" required
+                                    class="w-full bg-brand-dark border border-white/10 rounded px-3 py-2 text-white focus:border-brand-accent outline-none"
+                                    placeholder="e.g. Premium Cotton">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-1">Upload Shirt Photo</label>
+                                <input type="file" id="p-image-file" accept="image/*" required
+                                    class="w-full bg-brand-dark border border-white/10 rounded px-3 py-2 text-white focus:border-brand-accent outline-none file:bg-brand-accent file:text-brand-dark file:border-none file:rounded file:px-2 file:py-1 file:mr-3 file:cursor-pointer file:font-bold">
+                                <p class="text-xs text-brand-muted mt-1">Select a clear photo from your device.</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-1">Badge (Optional)</label>
+                                <select id="p-badge"
+                                    class="w-full bg-brand-dark border border-white/10 rounded px-3 py-2 text-white focus:border-brand-accent outline-none">
+                                    <option value="">None</option>
+                                    <option value="NEW">NEW</option>
+                                    <option value="HOT">HOT</option>
+                                    <option value="SALE">SALE</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">Available Sizes</label>
+                                <div class="flex flex-wrap gap-3">
+                                    <label class="flex items-center gap-2 text-xs text-white cursor-pointer">
+                                        <input type="checkbox" name="p-size" value="S" checked
+                                            class="w-4 h-4 rounded bg-brand-dark border-white/10 text-brand-accent focus:ring-brand-accent">
+                                        S
+                                    </label>
+                                    <label class="flex items-center gap-2 text-xs text-white cursor-pointer">
+                                        <input type="checkbox" name="p-size" value="M" checked
+                                            class="w-4 h-4 rounded bg-brand-dark border-white/10 text-brand-accent focus:ring-brand-accent">
+                                        M
+                                    </label>
+                                    <label class="flex items-center gap-2 text-xs text-white cursor-pointer">
+                                        <input type="checkbox" name="p-size" value="L" checked
+                                            class="w-4 h-4 rounded bg-brand-dark border-white/10 text-brand-accent focus:ring-brand-accent">
+                                        L
+                                    </label>
+                                    <label class="flex items-center gap-2 text-xs text-white cursor-pointer">
+                                        <input type="checkbox" name="p-size" value="XL" checked
+                                            class="w-4 h-4 rounded bg-brand-dark border-white/10 text-brand-accent focus:ring-brand-accent">
+                                        XL
+                                    </label>
+                                    <label class="flex items-center gap-2 text-xs text-white cursor-pointer">
+                                        <input type="checkbox" name="p-size" value="XXL" checked
+                                            class="w-4 h-4 rounded bg-brand-dark border-white/10 text-brand-accent focus:ring-brand-accent">
+                                        XXL
+                                    </label>
+                                </div>
+                            </div>
+
+                            <button type="submit"
+                                class="w-full bg-brand-accent text-brand-dark font-bold py-2 rounded hover:bg-white transition-colors">
+                                Add Product
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Product List -->
+                <div class="lg:col-span-2">
+                    <div class="bg-brand-gray p-6 rounded-lg border border-white/10">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-xl font-bold text-white">Current Inventory</h2>
+                            <button onclick="resetDefaults()"
+                                class="text-xs text-red-500 hover:text-red-300 underline">Reset to Default Data</button>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="border-b border-white/10 text-gray-400 text-sm">
+                                    <tr>
+                                        <th class="pb-3 pl-2">Image</th>
+                                        <th class="pb-3">Name</th>
+                                        <th class="pb-3">Price</th>
+                                        <th class="pb-3 text-right pr-2">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="product-table-body" class="text-sm">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Order Details Modal -->
+        <div id="order-details-modal"
+            class="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+            <div
+                class="bg-brand-gray w-full max-w-2xl rounded-lg border border-white/10 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+                <div class="p-4 border-b border-white/10 flex justify-between items-center bg-black/20">
+                    <h3 class="text-xl font-bold text-white">Order Items</h3>
+                    <button onclick="closeOrderModal()" class="text-gray-400 hover:text-white">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div id="order-items-list" class="p-6 overflow-y-auto space-y-4">
+                    <!-- Populated by JS -->
+                </div>
+                <div class="p-4 border-t border-white/10 bg-black/20 text-right">
+                    <button onclick="closeOrderModal()"
+                        class="bg-white text-black font-bold px-6 py-2 rounded hover:bg-brand-accent transition-colors">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <script src="script.js"></script>
+        <script>
+            // Admin Page Specific Logic
+
+            // Check if already logged in
+            if (sessionStorage.getItem('kanna_admin_logged_in') === 'true') {
+                document.getElementById('login-modal').classList.add('hidden');
+                document.getElementById('admin-content').classList.remove('hidden');
+                renderAdminOrders();
+            }
+
+            function handleLogin(e) {
+                e.preventDefault();
+                const password = document.getElementById('password').value;
+                // Simple hardcoded password
+                if (password === '202020') {
+                    sessionStorage.setItem('kanna_admin_logged_in', 'true');
+                    document.getElementById('login-modal').classList.add('hidden');
+                    document.getElementById('admin-content').classList.remove('hidden');
+                    renderAdminOrders();
+                } else {
+                    document.getElementById('login-error').classList.remove('hidden');
+                }
+            }
+
+            function logout() {
+                sessionStorage.removeItem('kanna_admin_logged_in');
+                window.location.reload();
+            }
+
+            // --- Tabs ---
+            function switchTab(tab) {
+                const ordersView = document.getElementById('view-orders');
+                const productsView = document.getElementById('view-products');
+                const btnOrders = document.getElementById('btn-orders');
+                const btnProducts = document.getElementById('btn-products');
+
+                if (tab === 'orders') {
+                    ordersView.classList.remove('hidden');
+                    productsView.classList.add('hidden');
+                    btnOrders.className = "text-white hover:text-brand-accent transition-colors font-medium border-b-2 border-brand-accent";
+                    btnProducts.className = "text-gray-400 hover:text-white transition-colors font-medium border-b-2 border-transparent";
+                    renderAdminOrders();
+                } else {
+                    ordersView.classList.add('hidden');
+                    productsView.classList.remove('hidden');
+                    btnProducts.className = "text-white hover:text-brand-accent transition-colors font-medium border-b-2 border-brand-accent";
+                    btnOrders.className = "text-gray-400 hover:text-white transition-colors font-medium border-b-2 border-transparent";
+                    renderAdminProducts();
+                }
+            }
+
+            // --- Orders Logic ---
+            let currentOrderFilter = 'all';
+
+            function setOrderFilter(filter) {
+                currentOrderFilter = filter;
+
+                // Update UI tabs
+                const filters = ['all', 'Pending', 'Confirmed'];
+                filters.forEach(f => {
+                    const btn = document.getElementById(`filter-${f.toLowerCase()}`);
+                    if (f === filter) {
+                        btn.className = "px-4 py-1.5 text-xs font-bold rounded-md transition-all bg-brand-accent text-brand-dark";
+                    } else {
+                        btn.className = "px-4 py-1.5 text-xs font-bold rounded-md transition-all text-gray-400 hover:text-white";
+                    }
+                });
+
+                renderAdminOrders();
+            }
+
+            function renderAdminOrders() {
+                let orders = [];
+                try {
+                    orders = getOrders();
+                } catch (e) {
+                    console.error("Error loading orders:", e);
+                }
+
+                const tbody = document.getElementById('orders-table-body');
+                if (!tbody) return;
+                tbody.innerHTML = '';
+
+                // Apply Filter
+                if (currentOrderFilter !== 'all') {
+                    orders = orders.filter(o => (o.status || 'Pending') === currentOrderFilter);
+                }
+
+                if (!orders || orders.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="7" class="py-12 text-center text-gray-500 italic">No ${currentOrderFilter === 'all' ? '' : currentOrderFilter.toLowerCase()} orders found.</td></tr>`;
+                    return;
+                }
+
+                orders.forEach(order => {
+                    if (!order || !order.customer) return; // Skip malformed
+
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-white/5 transition-colors';
+
+                    // Format Status
+                    const status = order.status || 'Pending';
+                    const statusColor = status === 'Confirmed' ? 'text-green-500' : 'text-yellow-500';
+                    const totalAmount = parseFloat(order.total || 0);
+
+                    tr.innerHTML = `
+                    <td class="py-4 px-6 text-gray-300 font-mono text-xs">${order.id || 'N/A'}</td>
+                    <td class="py-4 px-6 text-gray-300 text-xs">${order.date || 'N/A'}</td>
+                    <td class="py-4 px-6">
+                        <div class="text-white font-bold text-sm">${order.customer.name || 'Unknown'}</div>
+                        <div class="text-gray-400 text-xs">${order.customer.email || ''}</div>
+                        <div class="text-brand-accent text-xs mt-1 font-mono">${order.customer.phone || ''}</div>
+                    </td>
+                    <td class="py-4 px-6 text-gray-300 text-sm max-w-xs truncate" title="${order.customer.address || ''}">
+                        ${order.customer.address || 'N/A'}
+                    </td>
+                    <td class="py-4 px-6">
+                        <span class="px-2 py-1 rounded-full bg-white/5 text-[10px] font-bold uppercase border border-white/10 ${statusColor}">
+                            ${status}
+                        </span>
+                    </td>
+                    <td class="py-4 px-6 text-brand-accent font-bold">Rs. ${totalAmount.toLocaleString()}</td>
+                    <td class="py-4 px-6 text-center">
+                        <div class="flex flex-col gap-2">
+                            <button onclick="showOrderDetails('${order.id}')" class="text-[10px] bg-white/10 hover:bg-white/20 text-white px-2 py-1 rounded">
+                                View Items
+                            </button>
+                            ${status === 'Pending' ? `
+                                <button onclick="confirmOrder('${order.id}')" class="text-[10px] bg-green-500/20 hover:bg-green-500 text-green-500 hover:text-white px-2 py-1 rounded transition-colors">
+                                    Confirm
+                                </button>
+                            ` : ''}
+                        </div>
+                    </td>
+                `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            function confirmOrder(orderId) {
+                const orders = getOrders();
+                const order = orders.find(o => o.id === orderId);
+                if (order) {
+                    if (confirm(`Confirm order ${orderId} and mark as processed?`)) {
+                        order.status = 'Confirmed';
+                        updateOrder(order); // Function from script.js
+                        renderAdminOrders();
+
+                        // --- Generate Confirmation Email ---
+                        const customer = order.customer;
+                        const subject = encodeURIComponent(`Order Confirmed: ${order.id}`);
+                        let body = `Hello ${customer.name},\n\n`;
+                        body += `Good news! Your order (${order.id}) has been confirmed and is now being processed by Kanna Shirts.\n\n`;
+                        body += `--- Order Details ---\n`;
+                        order.items.forEach((item, index) => {
+                            body += `${index + 1}. ${item.name} (Size: ${item.selectedSize || 'M'}) - Rs. ${parseFloat(item.price).toLocaleString()}\n`;
+                        });
+                        body += `\nTotal: Rs. ${parseFloat(order.total).toLocaleString()}\n\n`;
+                        body += `We will notify you once your package is ready for delivery.\n\n`;
+                        body += `Thank you for choosing Kanna Shirts!\nBest Regards,\nKanna Admin Team`;
+
+                        const mailtoLink = `mailto:${customer.email}?subject=${subject}&body=${encodeURIComponent(body)}`;
+
+                        alert('Order confirmed successfully! Click OK to send the confirmation email to the customer.');
+                        window.location.href = mailtoLink;
+                    }
+                }
+            }
+
+            function showOrderDetails(orderId) {
+                const orders = getOrders();
+                const order = orders.find(o => o.id === orderId);
+                if (!order) return;
+
+                const listContainer = document.getElementById('order-items-list');
+                listContainer.innerHTML = '';
+
+                order.items.forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'flex items-center gap-4 bg-white/5 p-4 rounded-lg border border-white/5';
+                    itemDiv.innerHTML = `
+                    <img src="${item.image}" class="w-20 h-20 object-cover rounded shadow-md border border-white/10 bg-gray-900" alt="${item.name}">
+                    <div class="flex-1">
+                        <h4 class="text-white font-bold text-lg">${item.name}</h4>
+                        <div class="flex gap-4 mt-1">
+                            <p class="text-sm text-gray-400">Size: <span class="text-brand-accent font-bold">${item.selectedSize || 'M'}</span></p>
+                            <p class="text-sm text-gray-400">Price: <span class="text-brand-accent font-bold text-sm">Rs. ${parseFloat(item.price).toLocaleString()}</span></p>
+                        </div>
+                    </div>
+                `;
+                    listContainer.appendChild(itemDiv);
+                });
+
+                document.getElementById('order-details-modal').classList.remove('hidden');
+                document.getElementById('order-details-modal').classList.add('flex');
+            }
+
+            function closeOrderModal() {
+                document.getElementById('order-details-modal').classList.add('hidden');
+                document.getElementById('order-details-modal').classList.remove('flex');
+            }
+
+
+            // --- Products Logic ---
+            function handleAddProduct(e) {
+                e.preventDefault();
+
+                const fileInput = document.getElementById('p-image-file');
+                const file = fileInput.files[0];
+
+                if (!file) {
+                    alert("Please select a photo!");
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    const imageDataUrl = event.target.result;
+                    const sizes = Array.from(document.querySelectorAll('input[name="p-size"]:checked')).map(cb => cb.value);
+
+                    const newProduct = {
+                        id: Date.now(),
+                        name: document.getElementById('p-name').value,
+                        price: document.getElementById('p-price').value,
+                        desc: document.getElementById('p-desc').value,
+                        image: imageDataUrl,
+                        badge: document.getElementById('p-badge').value,
+                        sizes: sizes.length > 0 ? sizes : ['S', 'M', 'L', 'XL', 'XXL']
+                    };
+
+                    saveProduct(newProduct);
+                    e.target.reset();
+                    renderAdminProducts();
+                    alert('Product added successfully!');
+                };
+
+                reader.readAsDataURL(file);
+            }
+
+            function renderAdminProducts() {
+                const products = getProducts();
+                const tbody = document.getElementById('product-table-body');
+                tbody.innerHTML = '';
+
+                products.forEach(p => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'border-b border-white/5 hover:bg-white/5 transition-colors';
+                    tr.innerHTML = `
+                    <td class="py-3 pl-2">
+                        <img src="${p.image}" class="w-10 h-10 object-cover rounded bg-gray-800" alt="product">
+                    </td>
+                    <td class="py-3 text-white font-medium">${p.name}</td>
+                    <td class="py-3 text-brand-accent">Rs. ${p.price}</td>
+                    <td class="py-3 text-right pr-2">
+                        <button onclick="btnDeleteProduct(${p.id})" class="text-red-500 hover:text-white bg-red-500/10 hover:bg-red-500 px-3 py-1 rounded transition-all">Delete</button>
+                    </td>
+                `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            function btnDeleteProduct(id) {
+                if (confirm('Are you sure you want to delete this product?')) {
+                    deleteProduct(id);
+                    renderAdminProducts();
+                }
+            }
+
+            function resetDefaults() {
+                if (confirm('This will delete all custom products and restore the original 8 items. Continue?')) {
+                    localStorage.removeItem('kanna_products');
+                    window.location.reload();
+                }
+            }
+        </script>
+</body>
+
+</html>

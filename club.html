@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanna Club | Exclusive Community</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#0a0a0a',
+                            gray: '#1a1a1a',
+                            accent: '#FFD700',
+                            text: '#f3f4f6'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+</head>
+
+<body class="bg-brand-dark text-brand-text font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <nav id="navbar"
+        class="fixed w-full z-50 transition-all duration-300 border-b border-white/5 bg-brand-dark/95 backdrop-blur-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="index.html" class="text-2xl font-serif font-bold text-white tracking-tighter">KANNA <span
+                        class="text-brand-accent">CLUB</span></a>
+                <div class="flex items-center space-x-8">
+                    <a href="index.html" class="text-gray-300 hover:text-white transition-colors">Home</a>
+                    <a href="shop.html" class="text-gray-300 hover:text-white transition-colors">Shop</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <div class="pt-32 pb-12 text-center px-4">
+        <h1 class="text-4xl md:text-5xl font-serif font-bold text-white mb-4">Welcome to the <span
+                class="text-brand-accent">Club</span></h1>
+        <p class="text-gray-400 max-w-2xl mx-auto">Exclusive updates, early access, and a space for our community to
+            connect. Leave your thoughts below.</p>
+    </div>
+
+    <!-- Comments Section -->
+    <div class="flex-1 max-w-4xl mx-auto w-full px-4 pb-20">
+
+        <!-- Post Comment Form -->
+        <div class="bg-brand-gray p-8 rounded-lg border border-white/10 mb-12 shadow-2xl">
+            <h2 class="text-2xl font-bold text-white mb-6">Leave a Comment</h2>
+            <form onsubmit="handlePostComment(event)" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="text" id="comment-name" required placeholder="Your Name"
+                        class="bg-brand-dark border border-white/10 rounded px-4 py-3 text-white focus:border-brand-accent outline-none">
+                    <input type="email" id="comment-email" required placeholder="Your Email (Hidden)"
+                        class="bg-brand-dark border border-white/10 rounded px-4 py-3 text-white focus:border-brand-accent outline-none">
+                </div>
+                <textarea id="comment-text" required rows="3" placeholder="Share your thoughts..."
+                    class="w-full bg-brand-dark border border-white/10 rounded px-4 py-3 text-white focus:border-brand-accent outline-none"></textarea>
+
+                <div class="flex items-center gap-4 py-2">
+                    <span class="text-gray-400 text-sm">Your Rating:</span>
+                    <div class="flex gap-1" id="star-container">
+                        <button type="button" onclick="updateStarRating(1)"
+                            class="text-2xl text-brand-accent transition-colors star-btn">★</button>
+                        <button type="button" onclick="updateStarRating(2)"
+                            class="text-2xl text-brand-accent transition-colors star-btn">★</button>
+                        <button type="button" onclick="updateStarRating(3)"
+                            class="text-2xl text-brand-accent transition-colors star-btn">★</button>
+                        <button type="button" onclick="updateStarRating(4)"
+                            class="text-2xl text-brand-accent transition-colors star-btn">★</button>
+                        <button type="button" onclick="updateStarRating(5)"
+                            class="text-2xl text-brand-accent transition-colors star-btn">★</button>
+                    </div>
+                    <input type="hidden" id="comment-rating" value="5">
+                </div>
+                <button type="submit"
+                    class="bg-brand-accent text-brand-dark font-bold px-8 py-3 rounded hover:bg-white transition-colors">Post
+                    Comment</button>
+            </form>
+        </div>
+
+        <!-- Comments Feed -->
+        <h3 class="text-xl font-serif font-bold text-white mb-6 border-b border-white/10 pb-2">Community Wall</h3>
+        <div id="comments-container" class="space-y-6">
+            <!-- Comments will be injected here -->
+            <p class="text-gray-500 text-center py-10">No comments yet. Be the first!</p>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-brand-dark border-t border-white/10 py-8 text-center text-gray-500 text-sm">
+        <p>&copy; 2024 Kanna Shirts. Members Only.</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Inline script to init comments
+        document.addEventListener('DOMContentLoaded', () => {
+            renderComments();
+        });
+    </script>
+</body>
+
+</html>

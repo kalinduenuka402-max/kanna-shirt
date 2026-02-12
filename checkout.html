@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | Kanna Shirts</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#0a0a0a',
+                            gray: '#1a1a1a',
+                            accent: '#FFD700',
+                            text: '#f3f4f6'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+</head>
+
+<body class="bg-brand-dark text-brand-text font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Simple Navbar -->
+    <nav class="bg-brand-gray border-b border-white/5 py-4">
+        <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+            <a href="index.html" class="text-2xl font-serif font-bold text-white tracking-tighter">KANNA</a>
+            <a href="index.html" class="text-gray-400 hover:text-white text-sm">Cancel & Return</a>
+        </div>
+    </nav>
+
+    <div class="flex-1 max-w-7xl mx-auto w-full px-4 py-12 grid grid-cols-1 lg:grid-cols-2 gap-12">
+
+        <!-- Left: Order Summary -->
+        <div class="order-2 lg:order-1">
+            <h2 class="text-2xl font-bold text-white mb-6">Shipping Details</h2>
+            <form id="checkout-form" onsubmit="handlePlaceOrder(event)" class="space-y-6">
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">First Name</label>
+                        <input type="text" id="chk-fname" disabled
+                            class="w-full bg-brand-gray border border-white/10 rounded px-4 py-3 text-gray-500 cursor-not-allowed">
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Last Name</label>
+                        <input type="text" id="chk-lname" disabled
+                            class="w-full bg-brand-gray border border-white/10 rounded px-4 py-3 text-gray-500 cursor-not-allowed">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Phone Number</label>
+                    <input type="tel" id="chk-phone" required placeholder="071 123 4567"
+                        class="w-full bg-brand-gray border border-white/10 rounded px-4 py-3 text-white focus:border-brand-accent outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Shipping Address</label>
+                    <textarea id="chk-address" required rows="3" placeholder="No. 123, Street Name, City"
+                        class="w-full bg-brand-gray border border-white/10 rounded px-4 py-3 text-white focus:border-brand-accent outline-none"></textarea>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="block text-sm text-gray-400">City</label>
+                            <span id="city-shipping-badge"
+                                class="text-[10px] font-black text-brand-accent uppercase tracking-widest opacity-0 transition-opacity"></span>
+                        </div>
+                        <input type="text" id="chk-city" list="city-list" required placeholder="Type or select city..."
+                            class="w-full bg-brand-gray border border-white/10 rounded px-4 py-3 text-white focus:border-brand-accent outline-none">
+                        <datalist id="city-list">
+                            <!-- Populated by script -->
+                        </datalist>
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Zip Code</label>
+                        <input type="text" id="chk-zip" required placeholder="10000"
+                            class="w-full bg-brand-gray border border-white/10 rounded px-4 py-3 text-white focus:border-brand-accent outline-none">
+                    </div>
+                </div>
+
+                <div class="pt-6">
+                    <button type="submit"
+                        class="w-full bg-brand-accent text-brand-dark font-bold py-4 rounded-lg hover:bg-white transition-colors text-lg shadow-lg">
+                        Confirm Order
+                    </button>
+                    <p class="text-xs text-center text-gray-500 mt-4">By placing this order, you agree to our Terms of
+                        Service.</p>
+                </div>
+            </form>
+        </div>
+
+        <!-- Right: Cart Preview -->
+        <div class="order-1 lg:order-2 bg-brand-gray p-8 rounded-lg border border-white/10 h-fit">
+            <h3 class="text-xl font-serif font-bold text-white mb-6 border-b border-white/10 pb-4">Order Summary</h3>
+            <div id="checkout-items" class="space-y-4 mb-6 max-h-96 overflow-y-auto">
+                <!-- Items injected here -->
+            </div>
+
+            <div class="space-y-2 border-t border-white/10 pt-4">
+                <div class="flex justify-between text-gray-400">
+                    <span>Subtotal</span>
+                    <span id="chk-subtotal">Rs. 0</span>
+                </div>
+                <div class="flex justify-between text-gray-400">
+                    <span>Shipping</span>
+                    <span class="text-brand-accent italic font-bold" id="chk-shipping">--</span>
+                </div>
+                <div class="flex justify-between text-white font-bold text-xl pt-2 border-t border-white/10 mt-2">
+                    <span>Total</span>
+                    <span id="chk-total">Rs. 0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Extensive Sri Lanka Shipping Rates Mapping
+        const shippingRates = {
+            // Ratnapura District (Local Base)
+            'embilipitiya': 300, 'ratnapura': 350, 'balangoda': 400, 'pelmadulla': 350, 'kuruwita': 400, 'rakwana': 450, 'kahawatta': 400, 'eheliyagoda': 400, 'kalawana': 450, 'pallebedda': 350, 'godakawela': 350,
+
+            // Colombo District
+            'colombo': 500, 'dehiwala': 500, 'mount lavinia': 500, 'nugegoda': 450, 'kotte': 450, 'maharagama': 450, 'boralesgamuwa': 450, 'moratuwa': 500, 'padukka': 550, 'homagama': 500, 'hanwella': 550, 'avissawella': 500, 'battaramulla': 450, 'malabe': 500, 'kaduwela': 500, 'pannipitiya': 450, 'wellampitiya': 500, 'kolonnawa': 500, 'angoda': 500, 'rajagiriya': 450,
+
+            // Gampaha District
+            'gampaha': 550, 'negombo': 600, 'wattala': 550, 'ja-ela': 550, 'kadawatha': 550, 'kiribathgoda': 550, 'minuwangoda': 600, 'ganemulla': 550, 'ragama': 550, 'divulapitiya': 600, 'nitambuwa': 600, 'mirigama': 650, 'kandana': 550, 'seeduwa': 550,
+
+            // Kalutara District
+            'kalutara': 550, 'panadura': 550, 'horana': 500, 'matugama': 600, 'beruwala': 600, 'aluthgama': 600, 'bandaragama': 500, 'wadduwa': 550, 'ingiriya': 450,
+
+            // Kandy District
+            'kandy': 650, 'peradeniya': 650, 'gampola': 600, 'nawalapitiya': 650, 'katugastota': 650, 'kundasale': 650, 'wattegama': 650, 'kadugannawa': 650, 'gelioya': 650, 'peradeniya': 650,
+
+            // Matale & Nuwara Eliya
+            'matale': 700, 'dambulla': 750, 'sigiriya': 800, 'nuwara eliya': 750, 'hatton': 700, 'talawakele': 750, 'maskeliya': 750, 'rikillagaskada': 700,
+
+            // Galle District
+            'galle': 600, 'hikkaduwa': 600, 'ambalangoda': 600, 'karapitiya': 600, 'elpitiya': 600, 'baddegama': 600, 'bentota': 600, 'ahangama': 650,
+
+            // Matara District
+            'matara': 600, 'akuressa': 600, 'weligama': 600, 'deniyaya': 650, 'dikwella': 600, 'hakmana': 650, 'kamburupitiya': 600,
+
+            // Hambantota District
+            'hambantota': 450, 'tangalle': 450, 'beliatta': 400, 'ambalantota': 400, 'tissamaharama': 500, 'kataragama': 550, 'weeraketiya': 450, 'middeniya': 400,
+
+            // Kurunegala & Puttalam District
+            'kurunegala': 650, 'kuliyapitiya': 700, 'narammala': 650, 'pannala': 700, 'wariyapola': 700, 'nikaweratiya': 750, 'galgamuwa': 800, 'puttalam': 750, 'chilaw': 700, 'marawila': 700, 'wennappuwa': 700, 'dankotuwa': 700, 'nattandiya': 700, 'madampe': 700,
+
+            // Anuradhapura & Polonnaruwa
+            'anuradhapura': 800, 'kekirawa': 750, 'tambuttegama': 800, 'medawachchiya': 850, 'mihintale': 800, 'polonnaruwa': 850, 'kaduruwela': 850, 'hingurakgoda': 850,
+
+            // Badulla & Monaragala
+            'badulla': 600, 'bandarawela': 550, 'haputale': 550, 'diyatalawa': 550, 'ella': 600, 'mahiyanganaya': 700, 'welimada': 600, 'passara': 650, 'monaragala': 500, 'wellawaya': 450, 'buttala': 500, 'bibila': 600,
+
+            // Kegalle District
+            'kegalle': 550, 'mawanella': 600, 'warakapola': 550, 'ruwanwella': 500, 'dehiowita': 500, 'deraniyagala': 500,
+
+            // Northern & Eastern
+            'jaffna': 1100, 'vavuniya': 900, 'kilinochchi': 1000, 'mullaitivu': 1050, 'mannar': 1000, 'trincomalee': 900, 'kantale': 850, 'batticaloa': 950, 'kattankudy': 950, 'ampara': 850, 'kalmunai': 900, 'akkaraipattu': 900
+        };
+
+        const defaultOutstationRate = 650;
+
+        function updateTotals() {
+            const cart = getCart();
+            const subtotal = cart.reduce((sum, i) => sum + parseFloat(i.price), 0);
+            const cityInput = document.getElementById('chk-city').value.trim().toLowerCase();
+            const badge = document.getElementById('city-shipping-badge');
+
+            let shipping = 0;
+            if (cityInput) {
+                // Try exact match or partial match
+                shipping = shippingRates[cityInput];
+                if (!shipping) {
+                    const matchedKey = Object.keys(shippingRates).find(k => cityInput.includes(k));
+                    shipping = matchedKey ? shippingRates[matchedKey] : defaultOutstationRate;
+                }
+            }
+
+            const total = subtotal + shipping;
+
+            // Update summary
+            document.getElementById('chk-subtotal').textContent = 'Rs. ' + subtotal.toLocaleString();
+            document.getElementById('chk-shipping').textContent = shipping > 0 ? 'Rs. ' + shipping.toLocaleString() : '--';
+            document.getElementById('chk-total').textContent = 'Rs. ' + total.toLocaleString();
+
+            // Update badge next to input
+            if (cityInput && badge) {
+                badge.textContent = `Shipping: Rs. ${shipping.toLocaleString()}`;
+                badge.classList.remove('opacity-0');
+            } else if (badge) {
+                badge.classList.add('opacity-0');
+            }
+
+            return { subtotal, shipping, total };
+        }
+
+        // Inline script to init checkout page specifically
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = getCurrentUser();
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Populate City Datalist
+            const cityList = document.getElementById('city-list');
+            if (cityList) {
+                const sortedCities = Object.keys(shippingRates).sort();
+                sortedCities.forEach(city => {
+                    const option = document.createElement('option');
+                    // Capitalize first letters for display
+                    option.value = city.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                    cityList.appendChild(option);
+                });
+            }
+
+            // Pre-fill user data
+            const names = user.name.split(' ');
+            document.getElementById('chk-fname').value = names[0];
+            document.getElementById('chk-lname').value = names.slice(1).join(' ') || '';
+
+            // Render Cart
+            const cart = getCart();
+            if (cart.length === 0) {
+                alert("Your cart is empty");
+                window.location.href = 'index.html';
+                return;
+            }
+
+            const container = document.getElementById('checkout-items');
+            container.innerHTML = '';
+            cart.forEach(item => {
+                container.innerHTML += `
+                    <div class="flex items-center gap-4">
+                        <div class="relative w-16 h-16">
+                            <img src="${item.image}" class="w-full h-full object-cover rounded bg-gray-800">
+                            <span class="absolute -top-2 -right-2 bg-brand-gray border border-white/20 text-xs w-5 h-5 flex items-center justify-center rounded-full text-white">1</span>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="text-white font-medium text-sm line-clamp-1">${item.name}</h4>
+                            <p class="text-xs text-gray-400">Size: ${item.selectedSize || 'M'}</p>
+                        </div>
+                        <span class="text-brand-accent text-sm font-bold">Rs. ${parseFloat(item.price).toLocaleString()}</span>
+                    </div>
+                `;
+            });
+
+            updateTotals();
+
+            // Add listener to city input
+            document.getElementById('chk-city').addEventListener('input', updateTotals);
+        });
+
+        function handlePlaceOrder(e) {
+            e.preventDefault();
+
+            const user = getCurrentUser();
+            const phone = document.getElementById('chk-phone').value;
+            const address = document.getElementById('chk-address').value;
+            const city = document.getElementById('chk-city').value;
+            const zip = document.getElementById('chk-zip').value;
+            const cart = getCart();
+
+            const { subtotal, shipping, total } = updateTotals();
+
+            const order = {
+                id: 'ORD-' + Date.now().toString().slice(-6),
+                date: new Date().toLocaleString(),
+                customer: {
+                    name: user.name,
+                    email: user.email,
+                    phone: phone,
+                    address: `${address}, ${city} - ${zip}`
+                },
+                items: cart,
+                subtotal: subtotal,
+                shipping: shipping,
+                total: total,
+                status: 'Pending'
+            };
+
+            // Save Order to Internal Dashboard
+            saveOrder(order);
+
+            // --- Email Notification Logic ---
+            const recipientEmail = user.email; // Send to Customer
+            const subject = encodeURIComponent(`Order Confirmation: ${order.id}`);
+
+            const isSi = localStorage.getItem('kanna_lang') === 'si';
+
+            let body = isSi ? `ආයුබෝවන් ${user.name},\n\nKanna Shirts වෙතින් ඔබ කළ ඇණවුම සාර්ථකයි.\n\n` : `Hello ${user.name},\n\nHere is your order receipt from Kanna Shirts.\n\n`;
+
+            body += isSi ? `--- පාරිභෝගික විස්තර ---\n` : `--- Customer Details ---\n`;
+            body += isSi ? `නම: ${user.name}\n` : `Name: ${user.name}\n`;
+            body += `Email: ${user.email}\n`;
+            body += isSi ? `දුරකථන: ${phone}\n` : `Phone: ${phone}\n`;
+            body += isSi ? `ලිපිනය: ${address}, ${city}\n\n` : `Address: ${address}, ${city}\n\n`;
+
+            body += isSi ? `--- ඇණවුම් විස්තර ---\n` : `--- Order Items ---\n`;
+            cart.forEach((item, index) => {
+                body += `${index + 1}. ${item.name} (Size: ${item.selectedSize || 'M'}) - Rs. ${parseFloat(item.price).toLocaleString()}\n`;
+            });
+
+            body += `\n----------------------\n`;
+            body += isSi ? `අනු එකතුව: Rs. ${subtotal.toLocaleString()}\n` : `Subtotal: Rs. ${subtotal.toLocaleString()}\n`;
+            body += isSi ? `බෙදාහැරීමේ ගාස්තුව: Rs. ${shipping.toLocaleString()}\n` : `Shipping Cost: Rs. ${shipping.toLocaleString()}\n`;
+            body += isSi ? `මුළු එකතුව: Rs. ${total.toLocaleString()}\n` : `Total Amount: Rs. ${total.toLocaleString()}\n`;
+
+            body += isSi ? `\nඅප සමඟ සාප්පු සවාරි ගිය ඔබට ස්තුතියි!` : `\nThank you for shopping with us!`;
+
+            const mailtoLink = `mailto:${recipientEmail}?subject=${subject}&body=${encodeURIComponent(body)}`;
+
+            // Clear Cart and Redirect
+            localStorage.removeItem('kanna_cart');
+
+            const confirmMsg = isSi ? "ඇණවුම සුරැකිණි! ඇණවුම් විස්තර විද්‍යුත් තැපෑල (Email) මගින් යැවීමට OK ක්ලික් කරන්න." : "Order saved! Click OK to send the order details via Email.";
+
+            if (confirm(confirmMsg)) {
+                window.location.href = mailtoLink;
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+            } else {
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Helper to save order directly (if not in script.js yet)
+        function saveOrder(order) {
+            const orders = JSON.parse(localStorage.getItem('kanna_orders') || '[]');
+            orders.unshift(order);
+            localStorage.setItem('kanna_orders', JSON.stringify(orders));
+        }
+    </script>
+</body>
+
+</html>
